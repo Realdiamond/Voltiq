@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode (html.dark) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Light theme (default) ─────────────────────────────────────────────── */
+:root {
+  --bg-app: #f5f7fb;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-subtle: #f1f5f9;
+  --bg-inset: #f8fafc;
+
+  --border: #e6eaf1;
+  --border-hover: #d4dbe6;
+
+  --text-primary: #0f1729;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-faint: #b4c0d0;
+
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.10);
+  --accent-fg: #ffffff;
+
+  --success: #16a34a;
+  --success-soft: rgba(22, 163, 74, 0.10);
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.10);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.10);
+
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-pop: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --scrollbar: rgba(15, 23, 42, 0.12);
+}
+
+/* ─── Dark theme ─────────────────────────────────────────────────────────── */
+html.dark {
+  --bg-app: #0a0f1a;
+  --bg-card: #111827;
+  --bg-card-hover: #151d2e;
+  --bg-subtle: #0f1726;
+  --bg-inset: #0d1422;
+
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.14);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #8a99ad;
+  --text-faint: #5a6b80;
+
+  --accent: #3b82f6;
+  --accent-strong: #60a5fa;
+  --accent-soft: rgba(59, 130, 246, 0.16);
+  --accent-fg: #ffffff;
+
+  --success: #22c55e;
+  --success-soft: rgba(34, 197, 94, 0.14);
+  --warning: #f59e0b;
+  --warning-soft: rgba(245, 158, 11, 0.14);
+  --danger: #f43f5e;
+  --danger-soft: rgba(244, 63, 94, 0.14);
+
+  --shadow-card: none;
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --scrollbar: rgba(255, 255, 255, 0.10);
+}
+
+/* Base styles live INSIDE @layer base so Tailwind utilities (px-*, py-*,
+   space-y-*, gap-*, etc.) always win the cascade. Unlayered CSS here would
+   override every Tailwind utility and break all spacing. */
+@layer base {
+  html, body {
+    height: 100%;
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 7px; height: 7px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+}
+
+/* ─── Reusable surface + text helpers (token-driven) ─────────────────────── */
+@layer components {
+  .surface {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+  .surface-hover { transition: border-color 0.18s ease, background-color 0.18s ease; }
+  .surface-hover:hover { border-color: var(--border-hover); }
+
+  .surface-inset {
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .text-primary   { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-muted     { color: var(--text-muted); }
+  .text-faint     { color: var(--text-faint); }
+  .text-accent    { color: var(--accent); }
+}
