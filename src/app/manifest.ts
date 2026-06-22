@@ -2,11 +2,11 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "SmartBase — IoT Energy Monitor",
-    short_name: "SmartBase",
+    name: "Voltiq — IoT Energy Monitor",
+    short_name: "Voltiq",
     description:
       "Real-time electrical energy monitoring powered by ESP32 and PZEM-004T.",
-    start_url: "/",
+    start_url: "/dashboard",
     scope: "/",
     display: "standalone",
     orientation: "portrait-primary",

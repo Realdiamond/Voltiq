@@ -1,8 +1,8 @@
-// SmartBase service worker — makes the dashboard installable and resilient.
+// Voltiq service worker — makes the dashboard installable and resilient.
 // Strategy:
 //  - App shell / static assets: stale-while-revalidate (fast loads, offline shell).
 //  - Firebase / API / live data: always network (never cache real-time readings).
-const CACHE = "smartbase-v2";
+const CACHE = "voltiq-v1";
 // Don't pre-cache HTML routes (they change); just the offline essentials.
 const SHELL = ["/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 

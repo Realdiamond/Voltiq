@@ -16,7 +16,7 @@ const DEFAULTS: Settings = {
   currency: "₦",
 };
 
-const STORAGE_KEY = "smartbase-settings";
+const STORAGE_KEY = "voltiq-settings";
 
 interface SettingsContextValue extends Settings {
   setTariff: (v: number) => void;

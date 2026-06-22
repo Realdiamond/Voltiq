@@ -59,14 +59,14 @@ export default function Sidebar() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo.png"
-            alt="SmartBase"
+            alt="Voltiq"
             width={36}
             height={36}
             className="w-9 h-9 rounded-xl"
             style={{ boxShadow: "0 6px 16px var(--accent-soft)" }}
           />
           <div>
-            <h2 className="text-primary font-bold text-[15px] leading-none">SmartBase</h2>
+            <h2 className="text-primary font-bold text-[15px] leading-none">Voltiq</h2>
             <p className="text-muted text-[10px] mt-1">IoT Energy Monitor</p>
           </div>
         </Link>
@@ -118,7 +118,7 @@ export default function Sidebar() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-primary text-[12px] font-semibold truncate">Admin</p>
-              <p className="text-muted text-[10px] truncate">admin@smartbase.io</p>
+              <p className="text-muted text-[10px] truncate">admin@voltiq.io</p>
             </div>
           </div>
         </div>

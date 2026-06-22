@@ -31,8 +31,8 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="SmartBase" width={32} height={32} className="w-8 h-8 rounded-lg" />
-            <span className="text-primary font-bold text-[15px]">SmartBase</span>
+            <img src="/logo.png" alt="Voltiq" width={32} height={32} className="w-8 h-8 rounded-lg" />
+            <span className="text-primary font-bold text-[15px]">Voltiq</span>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -57,7 +57,7 @@ export default function LandingPage() {
             Know exactly where your <span style={{ color: "var(--accent)" }}>energy</span> goes.
           </h1>
           <p className="text-secondary text-[15px] sm:text-base mt-5 max-w-xl mx-auto leading-relaxed">
-            SmartBase turns an ESP32 + PZEM-004T meter into a real-time, offline-resilient
+            Voltiq turns an ESP32 + PZEM-004T meter into a real-time, offline-resilient
             energy dashboard — with live readings, cost tracking and smart alerts.
           </p>
           <div className="flex items-center justify-center gap-3 mt-8">
@@ -142,7 +142,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 text-muted text-[13px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="" width={20} height={20} className="w-5 h-5 rounded" />
-            SmartBase — IoT Energy Monitoring System
+            Voltiq — IoT Energy Monitoring System
           </div>
           <p className="text-faint text-[12px]">Built with Next.js · ESP32 · PZEM-004T · Firebase</p>
         </div>

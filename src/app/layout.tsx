@@ -10,14 +10,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SmartBase — IoT Energy Monitoring Dashboard",
+  title: "Voltiq — IoT Energy Monitoring Dashboard",
   description:
     "Real-time electrical energy monitoring powered by ESP32 and PZEM-004T.",
-  applicationName: "SmartBase",
+  applicationName: "Voltiq",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SmartBase",
+    title: "Voltiq",
   },
   icons: {
     // src/app/icon.png is auto-used as the favicon by the App Router.
