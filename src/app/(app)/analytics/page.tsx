@@ -2,6 +2,7 @@
 
 import MetricCard from "@/components/MetricCard";
 import EnergyChart from "@/components/EnergyChart";
+import AnomalyNote from "@/components/ai/AnomalyNote";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { Activity, Cpu, Gauge, Zap, TrendingUp, BatteryCharging } from "lucide-react";
 
@@ -56,6 +57,10 @@ export default function AnalyticsPage() {
             </p>
           </div>
         )}
+      </section>
+
+      <section>
+        <AnomalyNote />
       </section>
 
       <div className="pb-4" />

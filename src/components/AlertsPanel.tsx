@@ -2,6 +2,7 @@
 
 import { ShieldAlert, AlertTriangle, Info, Clock } from "lucide-react";
 import type { Alert } from "@/lib/mockData";
+import DiagnoseButton from "@/components/ai/DiagnoseButton";
 
 // Config for known alert types — colors reference theme tokens
 const config: Record<string, {
@@ -89,6 +90,7 @@ export default function AlertsPanel({ alerts }: { alerts: Alert[] }) {
                     <span className="ml-2 font-mono text-faint">{a.value.toFixed(1)}</span>
                   )}
                 </div>
+                <DiagnoseButton alert={a} />
               </div>
             </div>
           );

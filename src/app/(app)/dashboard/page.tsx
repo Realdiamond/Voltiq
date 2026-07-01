@@ -5,6 +5,7 @@ import EnergyChart from "@/components/EnergyChart";
 import DeviceStatus from "@/components/DeviceStatus";
 import AlertsPanel from "@/components/AlertsPanel";
 import ReadingsSummary from "@/components/ReadingsSummary";
+import AIInsightCard from "@/components/ai/AIInsightCard";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
 import {
@@ -33,6 +34,11 @@ export default function DashboardPage() {
         {kpis.map((kpi) => (
           <MetricCard key={kpi.label} {...kpi} />
         ))}
+      </section>
+
+      {/* AI insights */}
+      <section>
+        <AIInsightCard />
       </section>
 
       {/* Chart + Summary */}

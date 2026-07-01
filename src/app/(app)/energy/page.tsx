@@ -2,6 +2,7 @@
 
 import EnergyChart from "@/components/EnergyChart";
 import MetricCard from "@/components/MetricCard";
+import CostAdvisor from "@/components/ai/CostAdvisor";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
 import { BatteryCharging, CircleDollarSign, Cpu, CalendarDays } from "lucide-react";
@@ -51,6 +52,17 @@ export default function EnergyPage() {
             <p className="text-muted text-sm">No readings yet — waiting for data…</p>
           </div>
         )}
+      </section>
+
+      <section>
+        <CostAdvisor
+          avgPower={avgPowerW}
+          kWhPerDay={kWhPerDay}
+          costPerDay={costPerDay}
+          costPerMonth={costPerMonth}
+          tariff={tariff}
+          currency={currency}
+        />
       </section>
 
       <div className="pb-4" />

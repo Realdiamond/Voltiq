@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { ref, onValue, query, orderByChild, limitToLast } from "firebase/database";
 import { db } from "@/lib/firebase";
 import type { Device, EnergyReading, Alert, ChartDataPoint } from "@/lib/types";
+import {
+  MOCK_ENABLED,
+  MOCK_DEVICES,
+  MOCK_ALERTS,
+  generateMockReadings,
+} from "@/lib/mockData";
 
 // ─── Fallback mock data (shown while loading / if Firebase is empty) ──────────
 
@@ -29,6 +35,7 @@ export interface DashboardData {
   chartData: ChartDataPoint[];
   loading: boolean;
   error: string | null;
+  isMock: boolean;
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -39,6 +46,10 @@ export function useFirebaseData(): DashboardData {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // True when any stream fell back to demo/mock data (Firebase empty).
+  const [mockDevices, setMockDevices] = useState(false);
+  const [mockReadings, setMockReadings] = useState(false);
+  const [mockAlerts, setMockAlerts] = useState(false);
 
   useEffect(() => {
     // Track which listeners have reported in
@@ -70,8 +81,13 @@ export function useFirebaseData(): DashboardData {
             };
           });
           setDevices(list);
+          setMockDevices(false);
+        } else if (MOCK_ENABLED) {
+          setDevices(MOCK_DEVICES);
+          setMockDevices(true);
         } else {
           setDevices([]);
+          setMockDevices(false);
         }
         devicesLoaded = true;
         checkDone();
@@ -112,8 +128,13 @@ export function useFirebaseData(): DashboardData {
             })
             .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
           setReadings(list);
+          setMockReadings(false);
+        } else if (MOCK_ENABLED) {
+          setReadings(generateMockReadings());
+          setMockReadings(true);
         } else {
           setReadings([]);
+          setMockReadings(false);
         }
         readingsLoaded = true;
         checkDone();
@@ -152,8 +173,13 @@ export function useFirebaseData(): DashboardData {
             })
             .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
           setAlerts(list);
+          setMockAlerts(false);
+        } else if (MOCK_ENABLED) {
+          setAlerts(MOCK_ALERTS);
+          setMockAlerts(true);
         } else {
           setAlerts([]);
+          setMockAlerts(false);
         }
         alertsLoaded = true;
         checkDone();
@@ -188,5 +214,7 @@ export function useFirebaseData(): DashboardData {
     power: parseFloat(r.power.toFixed(1)),
   }));
 
-  return { devices, readings, latestReading, alerts, chartData, loading, error };
+  const isMock = mockDevices || mockReadings || mockAlerts;
+
+  return { devices, readings, latestReading, alerts, chartData, loading, error, isMock };
 }

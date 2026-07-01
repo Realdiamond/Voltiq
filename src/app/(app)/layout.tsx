@@ -2,12 +2,13 @@
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import ChatAssistant from "@/components/ai/ChatAssistant";
 import { DashboardDataProvider, useDashboard } from "@/lib/DashboardDataContext";
 import { SettingsProvider } from "@/lib/SettingsContext";
-import { Loader2, WifiOff } from "lucide-react";
+import { Loader2, WifiOff, FlaskConical } from "lucide-react";
 
 function Shell({ children }: { children: React.ReactNode }) {
-  const { latestReading, loading, error } = useDashboard();
+  const { latestReading, loading, error, isMock } = useDashboard();
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "var(--bg-app)" }}>
@@ -18,6 +19,19 @@ function Shell({ children }: { children: React.ReactNode }) {
 
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5">
+            {/* Demo-data banner — shown when readings fall back to mock data */}
+            {isMock && !loading && (
+              <div
+                className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-[12px]"
+                style={{ background: "var(--warning-soft)", color: "var(--warning)" }}
+              >
+                <FlaskConical size={14} className="flex-shrink-0" />
+                <span>
+                  Showing <strong>demo data</strong> — no live readings in Firebase yet. AI features work on this sample data too.
+                </span>
+              </div>
+            )}
+
             {/* Global connection-error banner (shown on every page) */}
             {error && (
               <div
@@ -48,6 +62,9 @@ function Shell({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </div>
+
+      {/* Global AI assistant (floating) */}
+      <ChatAssistant />
     </div>
   );
 }

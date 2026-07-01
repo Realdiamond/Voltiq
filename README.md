@@ -20,10 +20,43 @@ mobile or desktop.
 
 - Real-time monitoring of voltage, current, power, energy, frequency and cost.
 - Six views: Dashboard, Analytics, Devices, Energy and Cost, Alerts, and Settings.
+- **AI-powered features** (see below): alert diagnosis, dashboard insights, cost advice, anomaly detection and a conversational assistant.
 - Configurable tariff that converts energy (kWh) to local currency, with daily and monthly projections.
 - Light and dark themes, persisted across sessions.
 - Installable as a PWA, with offline support via a service worker.
 - Public landing page at `/` and the dashboard at `/dashboard`.
+
+## AI features
+
+Voltiq goes beyond *detecting* problems to *explaining* them and recommending action. All AI runs
+server-side through a single endpoint (`/api/ai`); the API key never reaches the browser.
+
+| Feature | Where | What it does |
+|---------|-------|--------------|
+| Alert Diagnosis | Alerts / Dashboard | For any alert, explains the likely root cause, severity, and concrete steps to fix it. |
+| AI Insights | Dashboard | Plain-English status of the system plus one actionable tip. |
+| Cost Advisor | Energy | Turns the projected bill into specific ways to spend less. |
+| Trend Analysis | Analytics | Narrates the recent trend and flags anomalies (spikes, sags, unstable voltage). |
+| Ask Voltiq | Everywhere | Floating chat assistant grounded in your live readings. |
+
+### Configuring AI
+
+The AI layer is **provider-agnostic** and driven entirely by environment variables, so you can swap
+the key — or the whole provider — in Vercel without touching code. The default is **Google Gemini**,
+which has a free tier (no billing required).
+
+1. Get a free key at <https://aistudio.google.com/app/apikey>.
+2. Add `GEMINI_API_KEY` to `.env.local` (local) or Vercel → Environment Variables (production).
+3. That's it. To switch to Claude/OpenAI/any OpenAI-compatible endpoint later, set `AI_PROVIDER`,
+   `AI_API_KEY`, `AI_MODEL` and optionally `AI_BASE_URL` instead. See `.env.example`.
+
+If no key is set, the AI features degrade gracefully with a setup hint — the rest of the app is unaffected.
+
+### Demo / mock data
+
+When Firebase has no readings yet (e.g. the hardware isn't connected), the dashboard falls back to
+realistic demo data and shows a "demo data" banner; the AI features work on this too. Set
+`NEXT_PUBLIC_ENABLE_MOCK=false` to disable it once live data is flowing.
 
 ## Technology stack
 
@@ -33,6 +66,7 @@ mobile or desktop.
 | Styling     | Tailwind CSS v4                          |
 | Charts      | Chart.js                                 |
 | Backend     | Firebase Realtime Database               |
+| AI          | Google Gemini (provider-agnostic; swappable via env) |
 | Icons       | lucide-react                             |
 
 ## Hardware
