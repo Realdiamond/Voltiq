@@ -97,25 +97,41 @@ npm run dev                  # http://localhost:3000
 | `npm run start` | Serve the production build   |
 | `npm run lint`  | Run the linter               |
 
+## Authentication
+
+Access to the dashboard is gated by **Firebase Authentication (email/password)**. Unauthenticated
+visitors are redirected to `/login`; the Realtime Database rules deny all reads and writes unless a
+request is authenticated.
+
+To set it up:
+
+1. In the Firebase Console → **Authentication → Sign-in method**, enable **Email/Password**.
+2. Create a demo account either from the login page (there's a "Create one" link) or in the console
+   under **Authentication → Users**.
+3. Sign in at `/login`.
+
+> **Hardware note:** because writes now require authentication, the ESP32 firmware must also
+> authenticate to Firebase (e.g. sign in with a dedicated device email/password, or use a token).
+> This is the correct production posture and replaces the previous open-write setup.
+
 ## Firebase configuration
 
 1. Create a Realtime Database in the Firebase Console.
 2. Copy your web app configuration into `.env.local` (see `.env.example` for the required keys).
-3. Publish the database rules. A development ruleset is provided in
-   [`database.rules.json`](./database.rules.json):
+3. Publish the database rules from [`database.rules.json`](./database.rules.json). They require
+   authentication for every read and write, and validate the shape of incoming data:
 
 ```json
 {
   "rules": {
-    "readings": { ".read": true, ".write": true, ".indexOn": ["timestamp"] },
-    "devices":  { ".read": true, ".write": true },
-    "alerts":   { ".read": true, ".write": true, ".indexOn": ["timestamp"] }
+    ".read": false,
+    ".write": false,
+    "readings": { ".read": "auth != null", ".write": "auth != null", ".indexOn": ["timestamp"] },
+    "devices":  { ".read": "auth != null", ".write": "auth != null" },
+    "alerts":   { ".read": "auth != null", ".write": "auth != null", ".indexOn": ["timestamp"] }
   }
 }
 ```
-
-These rules allow open read and write access and are intended for development and demonstration only.
-Restrict write access and add authentication before any production deployment.
 
 ### Data model
 

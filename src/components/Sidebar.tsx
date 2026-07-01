@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Activity, Cpu, Zap,
-  BellDot, Settings, Menu,
+  BellDot, Settings, Menu, LogOut,
 } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 
 const links = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -20,6 +21,16 @@ const links = [
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  const email = user?.email || "";
+  const initials = email ? email.slice(0, 2).toUpperCase() : "??";
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace("/login");
+  };
 
   return (
     <>
@@ -111,15 +122,25 @@ export default function Sidebar() {
         <div className="px-4 py-4 border-t" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center gap-3 p-2 rounded-xl" style={{ background: "var(--bg-subtle)" }}>
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
               style={{ background: "var(--accent-strong)" }}
             >
-              AD
+              {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-primary text-[12px] font-semibold truncate">Admin</p>
-              <p className="text-muted text-[10px] truncate">admin@voltiq.io</p>
+              <p className="text-primary text-[12px] font-semibold truncate">
+                {email ? email.split("@")[0] : "Signed in"}
+              </p>
+              <p className="text-muted text-[10px] truncate">{email || "—"}</p>
             </div>
+            <button
+              onClick={handleLogout}
+              aria-label="Sign out"
+              title="Sign out"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:text-primary flex-shrink-0"
+            >
+              <LogOut size={15} />
+            </button>
           </div>
         </div>
       </aside>

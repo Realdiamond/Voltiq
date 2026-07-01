@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import { AuthProvider } from "@/lib/AuthContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -49,7 +50,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <ServiceWorkerRegister />
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

@@ -1,18 +1,50 @@
 {
   "rules": {
+    ".read": false,
+    ".write": false,
+
     "readings": {
-      ".read": true,
-      ".write": true,
-      ".indexOn": ["timestamp"]
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp"],
+      "$reading": {
+        ".validate": "newData.hasChildren(['timestamp'])",
+        "device_id": { ".validate": "newData.isString()" },
+        "voltage":   { ".validate": "newData.isNumber()" },
+        "current":   { ".validate": "newData.isNumber()" },
+        "power":     { ".validate": "newData.isNumber()" },
+        "energy":    { ".validate": "newData.isNumber()" },
+        "frequency": { ".validate": "newData.isNumber()" },
+        "cost":      { ".validate": "newData.isNumber()" },
+        "timestamp": { ".validate": "newData.isString()" },
+        "$other":    { ".validate": false }
+      }
     },
+
     "devices": {
-      ".read": true,
-      ".write": true
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$device": {
+        "name":         { ".validate": "newData.isString()" },
+        "status":       { ".validate": "newData.isString()" },
+        "location":     { ".validate": "newData.isString()" },
+        "last_updated": { ".validate": "newData.isString()" },
+        "$other":       { ".validate": false }
+      }
     },
+
     "alerts": {
-      ".read": true,
-      ".write": true,
-      ".indexOn": ["timestamp"]
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp"],
+      "$alert": {
+        ".validate": "newData.hasChildren(['type', 'timestamp'])",
+        "type":      { ".validate": "newData.isString()" },
+        "message":   { ".validate": "newData.isString()" },
+        "value":     { ".validate": "newData.isNumber()" },
+        "timestamp": { ".validate": "newData.isString()" },
+        "$other":    { ".validate": false }
+      }
     }
   }
 }

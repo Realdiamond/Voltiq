@@ -1,11 +1,34 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import ChatAssistant from "@/components/ai/ChatAssistant";
 import { DashboardDataProvider, useDashboard } from "@/lib/DashboardDataContext";
 import { SettingsProvider } from "@/lib/SettingsContext";
+import { useAuth } from "@/lib/AuthContext";
 import { Loader2, WifiOff, FlaskConical } from "lucide-react";
+
+// Redirects to /login when there's no authenticated user, and shows a loader
+// while auth state is resolving. Only renders the dashboard once signed in.
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) router.replace("/login");
+  }, [loading, user, router]);
+
+  if (loading || !user) {
+    return (
+      <div className="flex h-screen items-center justify-center" style={{ background: "var(--bg-app)" }}>
+        <Loader2 size={32} className="animate-spin" style={{ color: "var(--accent)" }} />
+      </div>
+    );
+  }
+  return <>{children}</>;
+}
 
 function Shell({ children }: { children: React.ReactNode }) {
   const { latestReading, loading, error, isMock } = useDashboard();
@@ -71,10 +94,12 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SettingsProvider>
-      <DashboardDataProvider>
-        <Shell>{children}</Shell>
-      </DashboardDataProvider>
-    </SettingsProvider>
+    <AuthGate>
+      <SettingsProvider>
+        <DashboardDataProvider>
+          <Shell>{children}</Shell>
+        </DashboardDataProvider>
+      </SettingsProvider>
+    </AuthGate>
   );
 }
