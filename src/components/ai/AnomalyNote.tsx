@@ -7,14 +7,12 @@ import { useEffect, useRef } from "react";
 import { ScanLine, Loader2, AlertCircle, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useAI } from "@/lib/ai/useAI";
-import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import { buildStats } from "@/lib/ai/snapshot";
 import type { AnomalyResult } from "@/lib/ai/types";
 
 export default function AnomalyNote() {
   const { readings, chartData } = useDashboard();
   const { data, loading, error, run } = useAI<AnomalyResult>("anomaly");
-  const configured = useAIConfigured();
   const ran = useRef(false);
 
   const scan = () => {
@@ -25,15 +23,12 @@ export default function AnomalyNote() {
   };
 
   useEffect(() => {
-    if (configured === true && !ran.current && readings.length > 0) {
+    if (!ran.current && readings.length > 0) {
       ran.current = true;
       scan();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readings.length, configured]);
-
-  // Hide entirely until AI is configured — keeps the page clean.
-  if (configured !== true) return null;
+  }, [readings.length]);
 
   return (
     <div className="surface p-6">
@@ -59,8 +54,8 @@ export default function AnomalyNote() {
       </div>
 
       {error ? (
-        <div className="flex items-start gap-2 text-[12px]" style={{ color: "var(--danger)" }}>
-          <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-2 text-[12px] text-muted">
+          <AlertCircle size={14} className="mt-0.5 flex-shrink-0" style={{ color: "var(--accent)" }} />
           <span>{error}</span>
         </div>
       ) : loading && !data ? (

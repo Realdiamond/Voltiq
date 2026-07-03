@@ -1,14 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSettings } from "@/lib/SettingsContext";
 import { useAuth } from "@/lib/AuthContext";
 import ThemeToggle from "@/components/ThemeToggle";
-import { CircleDollarSign, Gauge, RotateCcw, Database, UserCircle, Check, Loader2 } from "lucide-react";
+import { CircleDollarSign, Gauge, RotateCcw, Database, UserCircle, Check, Loader2, BellRing } from "lucide-react";
+import { notificationPermission, requestNotificationPermission, notificationsSupported } from "@/lib/notifications";
 
 export default function SettingsPage() {
-  const { tariff, powerLimitW, currency, setTariff, setPowerLimitW, reset } = useSettings();
+  const { tariff, powerLimitW, currency, notify, setTariff, setPowerLimitW, setNotify, reset } = useSettings();
   const { displayName, user, updateName } = useAuth();
+
+  const [perm, setPerm] = useState<NotificationPermission>("default");
+  useEffect(() => { setPerm(notificationPermission()); }, []);
+
+  const toggleNotify = async () => {
+    if (notify) { setNotify(false); return; }
+    const p = await requestNotificationPermission();
+    setPerm(p);
+    setNotify(p === "granted");
+  };
 
   const [name, setName] = useState(user?.displayName || "");
   const [savingName, setSavingName] = useState(false);
@@ -130,6 +141,46 @@ export default function SettingsPage() {
             <p className="text-muted text-[12px] mt-1">Switch between light and dark themes.</p>
           </div>
           <ThemeToggle />
+        </div>
+      </section>
+
+      {/* Notifications */}
+      <section className="surface p-6 max-w-2xl">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <BellRing size={16} className="mt-0.5" style={{ color: "var(--accent)" }} />
+            <div>
+              <h2 className="text-primary font-semibold text-[14px]">Alert notifications</h2>
+              <p className="text-muted text-[12px] mt-1 max-w-md">
+                Get a notification when a new critical or warning alert is raised — for example when a
+                reading exceeds its limit. Works while Voltiq is open in your browser.
+              </p>
+              {perm === "denied" && (
+                <p className="text-[11px] mt-2" style={{ color: "var(--warning)" }}>
+                  Notifications are blocked in your browser. Enable them for this site in your browser settings.
+                </p>
+              )}
+              {!notificationsSupported() && (
+                <p className="text-[11px] mt-2 text-faint">This browser doesn&apos;t support notifications.</p>
+              )}
+            </div>
+          </div>
+
+          {/* toggle */}
+          <button
+            role="switch"
+            aria-checked={notify}
+            aria-label="Toggle alert notifications"
+            onClick={toggleNotify}
+            disabled={perm === "denied" || !notificationsSupported()}
+            className="relative w-12 h-7 rounded-full flex-shrink-0 transition-colors disabled:opacity-40"
+            style={{ background: notify ? "var(--accent)" : "var(--bg-subtle)" }}
+          >
+            <span
+              className="absolute top-1 w-5 h-5 rounded-full bg-white transition-transform"
+              style={{ transform: notify ? "translateX(22px)" : "translateX(4px)", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}
+            />
+          </button>
         </div>
       </section>
 

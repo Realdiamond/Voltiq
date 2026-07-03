@@ -1,15 +1,14 @@
 "use client";
 
 // Elegant, native-feeling "smart summary" strip for the dashboard. Reads the
-// live system in plain language. Intentionally understated — no boxy "AI panel"
-// look. Renders nothing until AI is configured so the dashboard stays clean.
+// live system in plain language. Always visible; on any problem it shows a calm,
+// friendly message rather than a technical error.
 
 import { useEffect, useRef } from "react";
-import { Sparkles, RefreshCw, Lightbulb } from "lucide-react";
+import { Sparkles, RefreshCw, Lightbulb, Info } from "lucide-react";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
 import { useAI } from "@/lib/ai/useAI";
-import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import { buildStats, toReadingSnapshot } from "@/lib/ai/snapshot";
 import type { InsightsResult } from "@/lib/ai/types";
 
@@ -22,8 +21,7 @@ const statusDot: Record<string, string> = {
 export default function AIInsightCard() {
   const { readings, latestReading, devices } = useDashboard();
   const { tariff, currency } = useSettings();
-  const { data, loading, run } = useAI<InsightsResult>("insights");
-  const configured = useAIConfigured();
+  const { data, loading, error, run } = useAI<InsightsResult>("insights");
   const ran = useRef(false);
 
   const analyse = () => {
@@ -38,15 +36,12 @@ export default function AIInsightCard() {
   };
 
   useEffect(() => {
-    if (configured === true && !ran.current && readings.length > 0) {
+    if (!ran.current && readings.length > 0) {
       ran.current = true;
       analyse();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readings.length, configured]);
-
-  // Stay invisible until AI is set up — keeps the dashboard clean.
-  if (configured !== true) return null;
+  }, [readings.length]);
 
   return (
     <div
@@ -100,6 +95,11 @@ export default function AIInsightCard() {
                 </p>
               )}
             </div>
+          ) : error ? (
+            <p className="mt-2 flex items-start gap-2 text-muted text-[12px] leading-relaxed">
+              <Info size={13} className="mt-0.5 flex-shrink-0" style={{ color: "var(--accent)" }} />
+              {error}
+            </p>
           ) : (
             <p className="mt-2 text-muted text-[12px]">Reading your system…</p>
           )}

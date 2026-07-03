@@ -3,15 +3,14 @@
 // environment variables, so you can swap the API key — or the whole provider —
 // in Vercel without touching any code:
 //
-//   AI_PROVIDER   "gemini" (default) | "openai"
-//   AI_API_KEY    your key  (falls back to GEMINI_API_KEY / OPENAI_API_KEY)
-//   AI_MODEL      optional model override
+//   AI_PROVIDER   "openai" (default) | "gemini"
+//   AI_API_KEY    your key  (falls back to OPENAI_API_KEY / GEMINI_API_KEY)
+//   AI_MODEL      optional model override (default: gpt-4o-mini for OpenAI)
 //   AI_BASE_URL   optional base URL for any OpenAI-compatible endpoint
 //                 (OpenRouter, Groq, Together, a local server, …)
 //
-// Default is Google Gemini's free tier — no billing required for demo volume.
-// To move to Claude/OpenAI later, set AI_PROVIDER + AI_API_KEY and (optionally)
-// AI_MODEL. No code change needed.
+// Default is OpenAI. Just set OPENAI_API_KEY. To switch providers later, set
+// AI_PROVIDER + AI_API_KEY and (optionally) AI_MODEL — no code change needed.
 
 import "server-only";
 
@@ -30,7 +29,8 @@ const DEFAULT_MODELS: Record<Provider, string> = {
 };
 
 export function getAIConfig(): AIConfig {
-  const provider = (process.env.AI_PROVIDER || "gemini").toLowerCase() as Provider;
+  // Default provider is OpenAI. Override with AI_PROVIDER=gemini to switch back.
+  const provider = (process.env.AI_PROVIDER || "openai").toLowerCase() as Provider;
   const apiKey =
     process.env.AI_API_KEY ||
     (provider === "gemini" ? process.env.GEMINI_API_KEY : process.env.OPENAI_API_KEY) ||

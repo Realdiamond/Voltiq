@@ -42,12 +42,11 @@ server-side through a single endpoint (`/api/ai`); the API key never reaches the
 ### Configuring AI
 
 The AI layer is **provider-agnostic** and driven entirely by environment variables, so you can swap
-the key — or the whole provider — in Vercel without touching code. The default is **Google Gemini**,
-which has a free tier (no billing required).
+the key — or the whole provider — in Vercel without touching code. The default provider is **OpenAI**.
 
-1. Get a free key at <https://aistudio.google.com/app/apikey>.
-2. Add `GEMINI_API_KEY` to `.env.local` (local) or Vercel → Environment Variables (production).
-3. That's it. To switch to Claude/OpenAI/any OpenAI-compatible endpoint later, set `AI_PROVIDER`,
+1. Create a key at <https://platform.openai.com/api-keys>.
+2. Add `OPENAI_API_KEY` to `.env.local` (local) or Vercel → Environment Variables (production).
+3. That's it. To switch to Gemini/any OpenAI-compatible endpoint later, set `AI_PROVIDER`,
    `AI_API_KEY`, `AI_MODEL` and optionally `AI_BASE_URL` instead. See `.env.example`.
 
 If no key is set, the AI features degrade gracefully with a setup hint — the rest of the app is unaffected.
@@ -66,7 +65,7 @@ realistic demo data and shows a "demo data" banner; the AI features work on this
 | Styling     | Tailwind CSS v4                          |
 | Charts      | Chart.js                                 |
 | Backend     | Firebase Realtime Database               |
-| AI          | Google Gemini (provider-agnostic; swappable via env) |
+| AI          | OpenAI (provider-agnostic; swappable via env) |
 | Icons       | lucide-react                             |
 
 ## Hardware

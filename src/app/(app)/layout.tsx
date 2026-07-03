@@ -6,8 +6,9 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import ChatAssistant from "@/components/ai/ChatAssistant";
 import { DashboardDataProvider, useDashboard } from "@/lib/DashboardDataContext";
-import { SettingsProvider } from "@/lib/SettingsContext";
+import { SettingsProvider, useSettings } from "@/lib/SettingsContext";
 import { useAuth } from "@/lib/AuthContext";
+import { useAlertNotifications } from "@/hooks/useAlertNotifications";
 import { Loader2, WifiOff, FlaskConical } from "lucide-react";
 
 // Redirects to /login when there's no authenticated user, and shows a loader
@@ -31,7 +32,9 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  const { latestReading, loading, error, isMock } = useDashboard();
+  const { latestReading, loading, error, isMock, alerts } = useDashboard();
+  const { notify } = useSettings();
+  useAlertNotifications(alerts, notify);
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "var(--bg-app)" }}>

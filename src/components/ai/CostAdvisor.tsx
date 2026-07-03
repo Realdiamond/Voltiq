@@ -5,7 +5,6 @@
 
 import { PiggyBank, Loader2, AlertCircle, TrendingDown } from "lucide-react";
 import { useAI } from "@/lib/ai/useAI";
-import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import type { AdvisorResult } from "@/lib/ai/types";
 
 interface Props {
@@ -19,10 +18,6 @@ interface Props {
 
 export default function CostAdvisor(props: Props) {
   const { data, loading, error, run } = useAI<AdvisorResult>("advisor");
-  const configured = useAIConfigured();
-
-  // Hide until AI is configured — keeps the page clean.
-  if (configured !== true) return null;
 
   return (
     <div className="surface p-6">
@@ -48,8 +43,8 @@ export default function CostAdvisor(props: Props) {
       </div>
 
       {error ? (
-        <div className="flex items-start gap-2 text-[12px]" style={{ color: "var(--danger)" }}>
-          <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-2 text-[12px] text-muted">
+          <AlertCircle size={14} className="mt-0.5 flex-shrink-0" style={{ color: "var(--accent)" }} />
           <span>{error}</span>
         </div>
       ) : data ? (

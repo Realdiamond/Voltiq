@@ -39,20 +39,26 @@ export function useAI<T>(task: AITask) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ task, payload }),
         });
-        const json = await res.json();
+        const json = await res.json().catch(() => ({}));
         if (!res.ok) {
+          const notConfigured = Boolean(json?.notConfigured);
           setState({
             data: null,
             loading: false,
-            error: json?.error || "AI request failed.",
-            notConfigured: Boolean(json?.notConfigured),
+            error: friendlyMessage(res.status, notConfigured),
+            notConfigured,
           });
           return null;
         }
         setState({ data: json.result as T, loading: false, error: null, notConfigured: false });
         return json.result as T;
       } catch {
-        setState({ data: null, loading: false, error: "Network error — please try again.", notConfigured: false });
+        setState({
+          data: null,
+          loading: false,
+          error: "We couldn't reach the service. Please check your connection and try again.",
+          notConfigured: false,
+        });
         return null;
       }
     },

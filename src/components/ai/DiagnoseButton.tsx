@@ -3,14 +3,13 @@
 // The flagship feature: for a given alert, ask the AI what the underlying issue
 // most likely is and what the user should actually do about it.
 
-import { Stethoscope, Loader2, ChevronDown, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Stethoscope, Loader2, ChevronDown, Info, CheckCircle2 } from "lucide-react";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
 import { useAI } from "@/lib/ai/useAI";
 import { buildStats, toReadingSnapshot } from "@/lib/ai/snapshot";
 import type { Alert } from "@/lib/types";
 import type { DiagnoseResult } from "@/lib/ai/types";
-import AINotice from "./AINotice";
 
 const sevColor: Record<string, string> = {
   low: "var(--success)",
@@ -21,7 +20,7 @@ const sevColor: Record<string, string> = {
 export default function DiagnoseButton({ alert }: { alert: Alert }) {
   const { readings, latestReading } = useDashboard();
   const { currency } = useSettings();
-  const { data, loading, error, notConfigured, run, reset } = useAI<DiagnoseResult>("diagnose");
+  const { data, loading, error, run, reset } = useAI<DiagnoseResult>("diagnose");
 
   const diagnose = () => {
     if (data) { reset(); return; } // toggle closed if already open
@@ -46,11 +45,9 @@ export default function DiagnoseButton({ alert }: { alert: Alert }) {
         {data && <ChevronDown size={12} />}
       </button>
 
-      {notConfigured && <div className="mt-2"><AINotice kind="setup" /></div>}
-
-      {error && !notConfigured && (
-        <div className="mt-2 flex items-start gap-2 text-[11px]" style={{ color: "var(--danger)" }}>
-          <AlertCircle size={12} className="mt-0.5 flex-shrink-0" />
+      {error && (
+        <div className="mt-2 flex items-start gap-2 text-[11px] text-muted">
+          <Info size={12} className="mt-0.5 flex-shrink-0" style={{ color: "var(--accent)" }} />
           <span>{error}</span>
         </div>
       )}

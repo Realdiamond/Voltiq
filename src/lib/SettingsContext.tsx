@@ -8,12 +8,14 @@ export interface Settings {
   tariff: number;        // ₦ per kWh
   powerLimitW: number;   // rated capacity used for utilisation %
   currency: string;      // symbol
+  notify: boolean;       // fire browser notifications on new alerts
 }
 
 const DEFAULTS: Settings = {
   tariff: 60,            // ₦60/kWh — Nigerian MYTO reference
   powerLimitW: 2000,     // 2 kW
   currency: "₦",
+  notify: false,
 };
 
 const STORAGE_KEY = "voltiq-settings";
@@ -21,6 +23,7 @@ const STORAGE_KEY = "voltiq-settings";
 interface SettingsContextValue extends Settings {
   setTariff: (v: number) => void;
   setPowerLimitW: (v: number) => void;
+  setNotify: (v: boolean) => void;
   reset: () => void;
 }
 
@@ -52,6 +55,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     ...settings,
     setTariff: (v) => update({ tariff: Number.isFinite(v) && v >= 0 ? v : 0 }),
     setPowerLimitW: (v) => update({ powerLimitW: Number.isFinite(v) && v > 0 ? v : DEFAULTS.powerLimitW }),
+    setNotify: (v) => update({ notify: Boolean(v) }),
     reset: () => update(DEFAULTS),
   };
 

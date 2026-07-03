@@ -7,9 +7,16 @@ import { useState, useRef, useEffect } from "react";
 import { Sparkles, X, Send, Loader2 } from "lucide-react";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
-import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import { buildStats, toReadingSnapshot } from "@/lib/ai/snapshot";
 import type { ChatMessage, ChatResult } from "@/lib/ai/types";
+
+// Friendly, user-facing messages — we never surface raw errors in chat.
+function friendlyChatError(status: number, notConfigured: boolean): string {
+  if (notConfigured) return "The assistant is being set up and will be available shortly.";
+  if (status === 429) return "I'm getting a lot of questions right now — please try again in a moment.";
+  if (status >= 500 || status === 0) return "We're experiencing high demand right now. Please try again shortly.";
+  return "Something went wrong on our side. Please try again.";
+}
 
 const SUGGESTIONS = [
   "Why might my bill be high?",
@@ -20,7 +27,6 @@ const SUGGESTIONS = [
 export default function ChatAssistant() {
   const { readings, latestReading } = useDashboard();
   const { tariff, currency } = useSettings();
-  const configured = useAIConfigured();
 
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -57,17 +63,15 @@ export default function ChatAssistant() {
           },
         }),
       });
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(json?.notConfigured
-          ? "AI isn't configured yet. Add GEMINI_API_KEY to enable the assistant."
-          : json?.error || "Something went wrong.");
+        setError(friendlyChatError(res.status, Boolean(json?.notConfigured)));
       } else {
         const r = json.result as ChatResult;
         setMessages((m) => [...m, { role: "assistant", content: r.reply }]);
       }
     } catch {
-      setError("Network error — please try again.");
+      setError("We couldn't reach the assistant. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }

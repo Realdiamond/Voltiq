@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import OneSignalInit from "@/components/OneSignalInit";
 import { AuthProvider } from "@/lib/AuthContext";
 
 const inter = Inter({
@@ -50,6 +51,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <ServiceWorkerRegister />
+        <OneSignalInit />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
