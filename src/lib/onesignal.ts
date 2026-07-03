@@ -24,10 +24,7 @@ export function promptPush(): Promise<boolean> {
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async (OneSignal: OneSignal) => {
       try {
-        // Prefer the slide prompt when available; otherwise request natively.
-        if (OneSignal?.Slidedown?.promptPush) {
-          await OneSignal.Slidedown.promptPush({ force: true });
-        }
+        // Fire the native permission prompt directly (our modal is the gesture).
         if (OneSignal?.Notifications?.requestPermission) {
           await OneSignal.Notifications.requestPermission();
         }

@@ -25,11 +25,11 @@ export default function OneSignalInit() {
 
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async (OneSignal) => {
+      // Uses OneSignal's default worker path (/OneSignalSDKWorker.js), which we
+      // provide in public/ with the PWA caching folded in.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (OneSignal as any).init({
         appId: APP_ID,
-        serviceWorkerPath: "sw.js",
-        serviceWorkerParam: { scope: "/" },
         allowLocalhostAsSecureOrigin: true,
       });
     });

@@ -7,7 +7,8 @@ export default function ServiceWorkerRegister() {
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
     const register = () => {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
+      // Combined worker: OneSignal push + Voltiq PWA caching (see public/OneSignalSDKWorker.js).
+      navigator.serviceWorker.register("/OneSignalSDKWorker.js", { scope: "/" }).catch(() => {
         /* registration failures are non-fatal */
       });
     };
