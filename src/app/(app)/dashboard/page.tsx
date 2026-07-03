@@ -8,13 +8,25 @@ import ReadingsSummary from "@/components/ReadingsSummary";
 import AIInsightCard from "@/components/ai/AIInsightCard";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
+import { useAuth } from "@/lib/AuthContext";
 import {
   Zap, Activity, Cpu, BatteryCharging, Radio, CircleDollarSign,
 } from "lucide-react";
 
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export default function DashboardPage() {
   const { devices, readings, latestReading, alerts, chartData } = useDashboard();
   const { tariff, currency } = useSettings();
+  const { displayName } = useAuth();
+
+  const name = displayName || "there";
+  const onlineCount = devices.filter((d) => d.status === "online").length;
 
   const cost = latestReading.energy * tariff;
 
@@ -29,6 +41,21 @@ export default function DashboardPage() {
 
   return (
     <>
+      {/* Greeting */}
+      <section className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-primary font-bold text-[22px] sm:text-[26px] tracking-tight capitalize leading-tight">
+            {greeting()}, {name}
+          </h1>
+          <p className="text-muted text-[13px] mt-1">
+            Here&apos;s how your energy system is doing right now.
+          </p>
+        </div>
+        <span className="text-muted text-[12px]">
+          {onlineCount} of {devices.length || 0} device{devices.length === 1 ? "" : "s"} online
+        </span>
+      </section>
+
       {/* KPI cards */}
       <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {kpis.map((kpi) => (

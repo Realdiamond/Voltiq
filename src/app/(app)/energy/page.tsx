@@ -32,7 +32,7 @@ export default function EnergyPage() {
   return (
     <>
       <div>
-        <h1 className="text-primary font-semibold text-lg">Energy &amp; Cost</h1>
+        <h1 className="text-primary font-bold text-[20px] sm:text-[22px] tracking-tight">Energy &amp; Cost</h1>
         <p className="text-muted text-[12px] mt-1">
           Consumption and projected billing at {money(tariff)}/kWh (configurable in Settings).
         </p>

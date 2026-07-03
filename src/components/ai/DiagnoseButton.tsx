@@ -42,7 +42,7 @@ export default function DiagnoseButton({ alert }: { alert: Alert }) {
         style={{ color: "var(--accent)" }}
       >
         {loading ? <Loader2 size={12} className="animate-spin" /> : <Stethoscope size={12} />}
-        {loading ? "Diagnosing…" : data ? "Hide diagnosis" : "Diagnose with AI"}
+        {loading ? "Diagnosing…" : data ? "Hide diagnosis" : "Explain this alert"}
         {data && <ChevronDown size={12} />}
       </button>
 

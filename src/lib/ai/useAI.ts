@@ -9,8 +9,17 @@ import type { AITask } from "./types";
 interface AIState<T> {
   data: T | null;
   loading: boolean;
+  /** Always a friendly, user-facing message — never a raw/technical error. */
   error: string | null;
   notConfigured: boolean;
+}
+
+// Map any failure to a calm, friendly message. We never surface raw errors.
+function friendlyMessage(status: number, notConfigured: boolean): string {
+  if (notConfigured) return "Smart features are being set up and will be available shortly.";
+  if (status === 429) return "We're getting a lot of requests right now — please try again in a moment.";
+  if (status >= 500 || status === 0) return "We're experiencing high demand right now. Please try again shortly.";
+  return "Something went wrong on our side. Please try again.";
 }
 
 export function useAI<T>(task: AITask) {

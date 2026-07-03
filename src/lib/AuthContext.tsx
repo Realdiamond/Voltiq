@@ -9,6 +9,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updateProfile,
   signOut,
   type User,
 } from "firebase/auth";
@@ -17,8 +18,11 @@ import { auth } from "@/lib/firebase";
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
+  /** Preferred display name: the profile name if set, else the email prefix. */
+  displayName: string;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name?: string) => Promise<void>;
+  updateName: (name: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -62,20 +66,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, name?: string) => {
     try {
-      await createUserWithEmailAndPassword(auth, email.trim(), password);
+      const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
+      const clean = name?.trim();
+      if (clean) {
+        await updateProfile(cred.user, { displayName: clean });
+        // updateProfile doesn't re-fire onAuthStateChanged; push the fresh user.
+        setUser({ ...cred.user, displayName: clean } as User);
+      }
     } catch (err) {
       throw new Error(friendlyError(err));
     }
+  };
+
+  const updateName = async (name: string) => {
+    if (!auth.currentUser) return;
+    const clean = name.trim();
+    await updateProfile(auth.currentUser, { displayName: clean });
+    setUser({ ...auth.currentUser, displayName: clean } as User);
   };
 
   const logout = async () => {
     await signOut(auth);
   };
 
+  const displayName =
+    user?.displayName?.trim() ||
+    (user?.email ? user.email.split("@")[0].replace(/[._-]+/g, " ") : "");
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, logout }}>
+    <AuthContext.Provider value={{ user, loading, displayName, signIn, signUp, updateName, logout }}>
       {children}
     </AuthContext.Provider>
   );

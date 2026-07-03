@@ -8,6 +8,7 @@ import {
   BellDot, Settings, Menu, LogOut,
 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+import { initialsOf } from "@/lib/initials";
 
 const links = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -22,10 +23,10 @@ export default function Sidebar() {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, displayName, logout } = useAuth();
 
   const email = user?.email || "";
-  const initials = email ? email.slice(0, 2).toUpperCase() : "??";
+  const initials = initialsOf(displayName || email || "?");
 
   const handleLogout = async () => {
     await logout();
@@ -128,8 +129,8 @@ export default function Sidebar() {
               {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-primary text-[12px] font-semibold truncate">
-                {email ? email.split("@")[0] : "Signed in"}
+              <p className="text-primary text-[12px] font-semibold truncate capitalize">
+                {displayName || "Signed in"}
               </p>
               <p className="text-muted text-[10px] truncate">{email || "—"}</p>
             </div>

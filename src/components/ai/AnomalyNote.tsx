@@ -7,13 +7,14 @@ import { useEffect, useRef } from "react";
 import { ScanLine, Loader2, AlertCircle, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useAI } from "@/lib/ai/useAI";
+import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import { buildStats } from "@/lib/ai/snapshot";
 import type { AnomalyResult } from "@/lib/ai/types";
-import AINotice from "./AINotice";
 
 export default function AnomalyNote() {
   const { readings, chartData } = useDashboard();
-  const { data, loading, error, notConfigured, run } = useAI<AnomalyResult>("anomaly");
+  const { data, loading, error, run } = useAI<AnomalyResult>("anomaly");
+  const configured = useAIConfigured();
   const ran = useRef(false);
 
   const scan = () => {
@@ -24,12 +25,15 @@ export default function AnomalyNote() {
   };
 
   useEffect(() => {
-    if (!ran.current && readings.length > 0) {
+    if (configured === true && !ran.current && readings.length > 0) {
       ran.current = true;
       scan();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readings.length]);
+  }, [readings.length, configured]);
+
+  // Hide entirely until AI is configured — keeps the page clean.
+  if (configured !== true) return null;
 
   return (
     <div className="surface p-6">
@@ -39,7 +43,7 @@ export default function AnomalyNote() {
             <ScanLine size={15} style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <h3 className="text-primary font-semibold text-[14px]">AI Trend Analysis</h3>
+            <h3 className="text-primary font-semibold text-[14px]">Trend Analysis</h3>
             <p className="text-muted text-[11px]">Anomaly detection on recent readings</p>
           </div>
         </div>
@@ -54,9 +58,7 @@ export default function AnomalyNote() {
         </button>
       </div>
 
-      {notConfigured ? (
-        <AINotice kind="setup" />
-      ) : error ? (
+      {error ? (
         <div className="flex items-start gap-2 text-[12px]" style={{ color: "var(--danger)" }}>
           <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
           <span>{error}</span>

@@ -36,36 +36,36 @@
   --scrollbar: rgba(15, 23, 42, 0.12);
 }
 
-/* ─── Dark theme ─────────────────────────────────────────────────────────── */
+/* ─── Dark theme (refined neutral near-black — clean, premium) ───────────── */
 html.dark {
-  --bg-app: #0a0f1a;
-  --bg-card: #111827;
-  --bg-card-hover: #151d2e;
-  --bg-subtle: #0f1726;
-  --bg-inset: #0d1422;
+  --bg-app: #0a0b0d;
+  --bg-card: #131417;
+  --bg-card-hover: #17181c;
+  --bg-subtle: #17181c;
+  --bg-inset: #0f1013;
 
-  --border: rgba(255, 255, 255, 0.07);
-  --border-hover: rgba(255, 255, 255, 0.14);
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
 
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #8a99ad;
-  --text-faint: #5a6b80;
+  --text-primary: #f4f5f7;
+  --text-secondary: #c3c8d0;
+  --text-muted: #868d99;
+  --text-faint: #565d68;
 
   --accent: #3b82f6;
   --accent-strong: #60a5fa;
-  --accent-soft: rgba(59, 130, 246, 0.16);
+  --accent-soft: rgba(59, 130, 246, 0.14);
   --accent-fg: #ffffff;
 
-  --success: #22c55e;
-  --success-soft: rgba(34, 197, 94, 0.14);
-  --warning: #f59e0b;
-  --warning-soft: rgba(245, 158, 11, 0.14);
-  --danger: #f43f5e;
-  --danger-soft: rgba(244, 63, 94, 0.14);
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.13);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.13);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.13);
 
-  --shadow-card: none;
-  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
   --scrollbar: rgba(255, 255, 255, 0.10);
 }
 
@@ -82,8 +82,13 @@ html.dark {
     -moz-osx-font-smoothing: grayscale;
   }
 
-  body {
-    transition: background-color 0.25s ease, color 0.25s ease;
+  /* Theme switching is instant: while `.theme-switching` is on <html> (added by
+     the toggle for one frame) every transition is suppressed, so the whole UI
+     flips at once with no staggered colour sweep. */
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition: none !important;
   }
 
   /* Scrollbar */
@@ -98,17 +103,16 @@ html.dark {
   .surface {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 20px;
     box-shadow: var(--shadow-card);
-    transition: background-color 0.25s ease, border-color 0.25s ease;
   }
-  .surface-hover { transition: border-color 0.18s ease, background-color 0.18s ease; }
-  .surface-hover:hover { border-color: var(--border-hover); }
+  .surface-hover { transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease; }
+  .surface-hover:hover { border-color: var(--border-hover); box-shadow: var(--shadow-pop); }
 
   .surface-inset {
     background: var(--bg-inset);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
   }
 
   .text-primary   { color: var(--text-primary); }

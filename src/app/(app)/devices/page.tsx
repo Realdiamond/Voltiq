@@ -19,7 +19,7 @@ export default function DevicesPage() {
   return (
     <>
       <div>
-        <h1 className="text-primary font-semibold text-lg">Devices</h1>
+        <h1 className="text-primary font-bold text-[20px] sm:text-[22px] tracking-tight">Devices</h1>
         <p className="text-muted text-[12px] mt-1">
           ESP32 + PZEM-004T sensing nodes registered to your account.
         </p>

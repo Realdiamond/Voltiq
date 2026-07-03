@@ -41,7 +41,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         <Header lastUpdated={latestReading.timestamp} />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-5 lg:py-7 space-y-6">
             {/* Demo-data banner — shown when readings fall back to mock data */}
             {isMock && !loading && (
               <div

@@ -13,11 +13,18 @@ export default function ThemeToggle() {
 
   const toggle = () => {
     const next = theme === "dark" ? "light" : "dark";
+    const root = document.documentElement;
+    // Suppress transitions for one frame so the whole UI flips at once.
+    root.classList.add("theme-switching");
     setTheme(next);
-    document.documentElement.classList.toggle("dark", next === "dark");
+    root.classList.toggle("dark", next === "dark");
     try {
       localStorage.setItem("theme", next);
     } catch {}
+    // Re-enable transitions after the paint that applied the new theme.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => root.classList.remove("theme-switching"));
+    });
   };
 
   return (

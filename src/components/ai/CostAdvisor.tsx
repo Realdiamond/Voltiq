@@ -5,8 +5,8 @@
 
 import { PiggyBank, Loader2, AlertCircle, TrendingDown } from "lucide-react";
 import { useAI } from "@/lib/ai/useAI";
+import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import type { AdvisorResult } from "@/lib/ai/types";
-import AINotice from "./AINotice";
 
 interface Props {
   avgPower: number;
@@ -18,7 +18,11 @@ interface Props {
 }
 
 export default function CostAdvisor(props: Props) {
-  const { data, loading, error, notConfigured, run } = useAI<AdvisorResult>("advisor");
+  const { data, loading, error, run } = useAI<AdvisorResult>("advisor");
+  const configured = useAIConfigured();
+
+  // Hide until AI is configured — keeps the page clean.
+  if (configured !== true) return null;
 
   return (
     <div className="surface p-6">
@@ -28,7 +32,7 @@ export default function CostAdvisor(props: Props) {
             <PiggyBank size={15} style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <h3 className="text-primary font-semibold text-[14px]">AI Cost Advisor</h3>
+            <h3 className="text-primary font-semibold text-[14px]">Savings &amp; Cost Advice</h3>
             <p className="text-muted text-[11px]">Ways to reduce your bill</p>
           </div>
         </div>
@@ -43,9 +47,7 @@ export default function CostAdvisor(props: Props) {
         </button>
       </div>
 
-      {notConfigured ? (
-        <AINotice kind="setup" />
-      ) : error ? (
+      {error ? (
         <div className="flex items-start gap-2 text-[12px]" style={{ color: "var(--danger)" }}>
           <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
           <span>{error}</span>

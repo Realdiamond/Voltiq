@@ -94,7 +94,14 @@ export function useFirebaseData(): DashboardData {
       },
       (err) => {
         console.error("Firebase devices error:", err);
-        setError(`Devices: ${err.message}`);
+        // Resilient fallback: if mock is enabled, show demo data instead of an
+        // error so the dashboard still works when Firebase is unreachable.
+        if (MOCK_ENABLED) {
+          setDevices(MOCK_DEVICES);
+          setMockDevices(true);
+        } else {
+          setError(`Devices: ${err.message}`);
+        }
         devicesLoaded = true;
         checkDone();
       }
@@ -141,7 +148,12 @@ export function useFirebaseData(): DashboardData {
       },
       (err) => {
         console.error("Firebase readings error:", err);
-        setError(`Readings: ${err.message}`);
+        if (MOCK_ENABLED) {
+          setReadings(generateMockReadings());
+          setMockReadings(true);
+        } else {
+          setError(`Readings: ${err.message}`);
+        }
         readingsLoaded = true;
         checkDone();
       }
@@ -186,14 +198,32 @@ export function useFirebaseData(): DashboardData {
       },
       (err) => {
         console.error("Firebase alerts error:", err);
-        setError(`Alerts: ${err.message}`);
+        if (MOCK_ENABLED) {
+          setAlerts(MOCK_ALERTS);
+          setMockAlerts(true);
+        } else {
+          setError(`Alerts: ${err.message}`);
+        }
         alertsLoaded = true;
         checkDone();
       }
     );
 
+    // Resilience timeout: if Firebase hasn't responded within a few seconds
+    // (unreachable, misconfigured, or very slow), fall back to demo data for
+    // any stream still pending instead of spinning forever. Keeps the demo and
+    // the defence robust even without a live connection.
+    const timer = setTimeout(() => {
+      if (!MOCK_ENABLED) return;
+      if (!devicesLoaded) { setDevices(MOCK_DEVICES); setMockDevices(true); devicesLoaded = true; }
+      if (!readingsLoaded) { setReadings(generateMockReadings()); setMockReadings(true); readingsLoaded = true; }
+      if (!alertsLoaded) { setAlerts(MOCK_ALERTS); setMockAlerts(true); alertsLoaded = true; }
+      setLoading(false);
+    }, 3500);
+
     // Cleanup on unmount
     return () => {
+      clearTimeout(timer);
       unsubDevices();
       unsubReadings();
       unsubAlerts();

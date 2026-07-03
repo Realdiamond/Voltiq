@@ -35,7 +35,7 @@ export default function AnalyticsPage() {
   return (
     <>
       <div>
-        <h1 className="text-primary font-semibold text-lg">Analytics</h1>
+        <h1 className="text-primary font-bold text-[20px] sm:text-[22px] tracking-tight">Analytics</h1>
         <p className="text-muted text-[12px] mt-1">
           Derived metrics and trends from the latest {readings.length} readings.
         </p>

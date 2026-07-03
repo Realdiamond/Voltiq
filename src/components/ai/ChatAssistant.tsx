@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { Sparkles, X, Send, Loader2 } from "lucide-react";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
+import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import { buildStats, toReadingSnapshot } from "@/lib/ai/snapshot";
 import type { ChatMessage, ChatResult } from "@/lib/ai/types";
 
@@ -19,6 +20,7 @@ const SUGGESTIONS = [
 export default function ChatAssistant() {
   const { readings, latestReading } = useDashboard();
   const { tariff, currency } = useSettings();
+  const configured = useAIConfigured();
 
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);

@@ -1,17 +1,19 @@
 "use client";
 
-// Dashboard "AI Insights" card — plain-English status + one actionable tip.
+// Elegant, native-feeling "smart summary" strip for the dashboard. Reads the
+// live system in plain language. Intentionally understated — no boxy "AI panel"
+// look. Renders nothing until AI is configured so the dashboard stays clean.
 
 import { useEffect, useRef } from "react";
-import { Sparkles, RefreshCw, Lightbulb, AlertCircle } from "lucide-react";
+import { Sparkles, RefreshCw, Lightbulb } from "lucide-react";
 import { useDashboard } from "@/lib/DashboardDataContext";
 import { useSettings } from "@/lib/SettingsContext";
 import { useAI } from "@/lib/ai/useAI";
+import { useAIConfigured } from "@/lib/ai/useAIConfigured";
 import { buildStats, toReadingSnapshot } from "@/lib/ai/snapshot";
 import type { InsightsResult } from "@/lib/ai/types";
-import AINotice from "./AINotice";
 
-const statusColor: Record<string, string> = {
+const statusDot: Record<string, string> = {
   normal: "var(--success)",
   attention: "var(--warning)",
   critical: "var(--danger)",
@@ -20,7 +22,8 @@ const statusColor: Record<string, string> = {
 export default function AIInsightCard() {
   const { readings, latestReading, devices } = useDashboard();
   const { tariff, currency } = useSettings();
-  const { data, loading, error, notConfigured, run } = useAI<InsightsResult>("insights");
+  const { data, loading, run } = useAI<InsightsResult>("insights");
+  const configured = useAIConfigured();
   const ran = useRef(false);
 
   const analyse = () => {
@@ -34,82 +37,74 @@ export default function AIInsightCard() {
     });
   };
 
-  // Auto-run once when the first readings arrive (keeps free-tier calls low).
   useEffect(() => {
-    if (!ran.current && readings.length > 0) {
+    if (configured === true && !ran.current && readings.length > 0) {
       ran.current = true;
       analyse();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readings.length]);
+  }, [readings.length, configured]);
+
+  // Stay invisible until AI is set up — keeps the dashboard clean.
+  if (configured !== true) return null;
 
   return (
-    <div className="surface p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-soft)" }}>
-            <Sparkles size={15} style={{ color: "var(--accent)" }} />
-          </div>
-          <div>
-            <h3 className="text-primary font-semibold text-[14px]">AI Insights</h3>
-            <p className="text-muted text-[11px]">Live reading of your system</p>
-          </div>
-        </div>
-        <button
-          onClick={analyse}
-          disabled={loading}
-          aria-label="Refresh insights"
-          className="w-8 h-8 rounded-lg surface surface-hover flex items-center justify-center text-muted disabled:opacity-50"
+    <div
+      className="surface p-5 sm:p-6 relative overflow-hidden"
+      style={{ borderColor: "color-mix(in srgb, var(--accent) 22%, var(--border))" }}
+    >
+      {/* soft accent glow */}
+      <div
+        className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-40 blur-3xl"
+        style={{ background: "var(--accent-soft)" }}
+      />
+      <div className="relative flex items-start gap-3.5">
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: "linear-gradient(135deg, var(--accent), var(--accent-strong))" }}
         >
-          <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
-        </button>
-      </div>
-
-      {notConfigured ? (
-        <AINotice kind="setup" />
-      ) : error ? (
-        <div className="flex items-start gap-2 text-[12px]" style={{ color: "var(--danger)" }}>
-          <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
-          <span>{error}</span>
+          <Sparkles size={16} className="text-white" />
         </div>
-      ) : loading && !data ? (
-        <SkeletonLines />
-      ) : data ? (
-        <div className="space-y-3">
+
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span
-              className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-              style={{ background: "var(--bg-subtle)", color: statusColor[data.status] || "var(--text-secondary)" }}
+            <h3 className="text-primary font-semibold text-[13px]">Smart summary</h3>
+            {data && (
+              <span className="flex items-center gap-1.5 text-[11px] font-medium capitalize" style={{ color: statusDot[data.status] || "var(--text-muted)" }}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusDot[data.status] || "var(--text-muted)" }} />
+                {data.status}
+              </span>
+            )}
+            <button
+              onClick={analyse}
+              disabled={loading}
+              aria-label="Refresh summary"
+              className="ml-auto w-7 h-7 rounded-lg flex items-center justify-center text-muted hover:text-primary disabled:opacity-50"
             >
-              {data.status}
-            </span>
+              <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+            </button>
           </div>
-          <p className="text-secondary text-[13px] leading-relaxed">{data.summary}</p>
-          {data.highlight && (
-            <p className="text-muted text-[12px] leading-relaxed">
-              <span className="text-primary font-medium">Notable:</span> {data.highlight}
-            </p>
-          )}
-          {data.tip && (
-            <div className="flex items-start gap-2 p-3 rounded-xl surface-inset">
-              <Lightbulb size={14} className="mt-0.5 flex-shrink-0" style={{ color: "var(--warning)" }} />
-              <p className="text-secondary text-[12px] leading-relaxed">{data.tip}</p>
+
+          {loading && !data ? (
+            <div className="mt-3 space-y-2 animate-pulse">
+              <div className="h-3 rounded" style={{ background: "var(--bg-subtle)", width: "92%" }} />
+              <div className="h-3 rounded" style={{ background: "var(--bg-subtle)", width: "70%" }} />
             </div>
+          ) : data ? (
+            <div className="mt-1.5 space-y-2.5">
+              <p className="text-secondary text-[13px] leading-relaxed">{data.summary}</p>
+              {data.tip && (
+                <p className="flex items-start gap-2 text-muted text-[12px] leading-relaxed">
+                  <Lightbulb size={13} className="mt-0.5 flex-shrink-0" style={{ color: "var(--warning)" }} />
+                  {data.tip}
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="mt-2 text-muted text-[12px]">Reading your system…</p>
           )}
         </div>
-      ) : (
-        <p className="text-muted text-[12px]">Waiting for readings…</p>
-      )}
-    </div>
-  );
-}
-
-function SkeletonLines() {
-  return (
-    <div className="space-y-2 animate-pulse">
-      <div className="h-3 rounded" style={{ background: "var(--bg-subtle)", width: "40%" }} />
-      <div className="h-3 rounded" style={{ background: "var(--bg-subtle)", width: "90%" }} />
-      <div className="h-3 rounded" style={{ background: "var(--bg-subtle)", width: "75%" }} />
+      </div>
     </div>
   );
 }

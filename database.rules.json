@@ -1,11 +1,12 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false,
+    "//": "Locked to the owner account only. Reads/writes require this exact UID.",
+    "//_owner": "Voltiq owner: oluwatimilehinakinsanmi@gmail.com",
+
+    ".read": "auth != null && auth.uid === 'y5vPMGCZgvdouJxQRJrWVNNHXa82'",
+    ".write": "auth != null && auth.uid === 'y5vPMGCZgvdouJxQRJrWVNNHXa82'",
 
     "readings": {
-      ".read": "auth != null",
-      ".write": "auth != null",
       ".indexOn": ["timestamp"],
       "$reading": {
         ".validate": "newData.hasChildren(['timestamp'])",
@@ -22,8 +23,6 @@
     },
 
     "devices": {
-      ".read": "auth != null",
-      ".write": "auth != null",
       "$device": {
         "name":         { ".validate": "newData.isString()" },
         "status":       { ".validate": "newData.isString()" },
@@ -34,8 +33,6 @@
     },
 
     "alerts": {
-      ".read": "auth != null",
-      ".write": "auth != null",
       ".indexOn": ["timestamp"],
       "$alert": {
         ".validate": "newData.hasChildren(['type', 'timestamp'])",

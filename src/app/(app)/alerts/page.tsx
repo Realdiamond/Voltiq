@@ -18,7 +18,7 @@ export default function AlertsPage() {
   return (
     <>
       <div>
-        <h1 className="text-primary font-semibold text-lg">Alerts</h1>
+        <h1 className="text-primary font-bold text-[20px] sm:text-[22px] tracking-tight">Alerts</h1>
         <p className="text-muted text-[12px] mt-1">
           Threshold breaches and system events pushed from your devices.
         </p>
