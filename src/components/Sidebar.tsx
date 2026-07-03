@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Activity, Cpu, Zap,
-  BellDot, Settings, Menu, LogOut,
+  BellDot, Settings, Menu, LogOut, X
 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { initialsOf } from "@/lib/initials";
@@ -20,7 +20,7 @@ const links = [
 ];
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { user, displayName, logout } = useAuth();
@@ -36,13 +36,15 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile toggle button */}
-      <button
-        onClick={() => setOpen(!open)}
-        aria-label="Toggle menu"
-        className="fixed top-4 left-4 z-50 w-10 h-10 rounded-xl surface flex items-center justify-center text-secondary lg:hidden"
-      >
-        <Menu size={18} />
-      </button>
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          aria-label="Toggle menu"
+          className="fixed top-4 left-4 z-50 w-10 h-10 rounded-xl surface flex items-center justify-center text-secondary lg:hidden"
+        >
+          <Menu size={18} />
+        </button>
+      )}
 
       {/* Overlay for mobile */}
       {open && (
@@ -63,25 +65,33 @@ export default function Sidebar() {
         `}
       >
         {/* Brand */}
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-3 px-5 h-[72px] border-b"
-          style={{ borderColor: "var(--border)" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo.png"
-            alt="Voltiq"
-            width={36}
-            height={36}
-            className="w-9 h-9 rounded-xl"
-            style={{ boxShadow: "0 6px 16px var(--accent-soft)" }}
-          />
-          <div>
-            <h2 className="text-primary font-bold text-[15px] leading-none">Voltiq</h2>
-            <p className="text-muted text-[10px] mt-1">IoT Energy Monitor</p>
-          </div>
-        </Link>
+        <div className="flex items-center justify-between px-5 h-[72px] border-b" style={{ borderColor: "var(--border)" }}>
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-3"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt="Voltiq"
+              width={36}
+              height={36}
+              className="w-9 h-9 rounded-xl"
+              style={{ boxShadow: "0 6px 16px var(--accent-soft)" }}
+            />
+            <div>
+              <h2 className="text-primary font-bold text-[15px] leading-none">Voltiq</h2>
+              <p className="text-muted text-[10px] mt-1">IoT Energy Monitor</p>
+            </div>
+          </Link>
+          <button
+            onClick={() => setOpen(false)}
+            aria-label="Close menu"
+            className="w-8 h-8 -mr-2 rounded-lg flex items-center justify-center text-secondary lg:hidden hover:bg-[var(--bg-subtle)]"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
