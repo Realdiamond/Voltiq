@@ -72,6 +72,11 @@ html.dark {
 /* Base styles live INSIDE @layer base so Tailwind utilities (px-*, py-*,
    space-y-*, gap-*, etc.) always win the cascade. Unlayered CSS here would
    override every Tailwind utility and break all spacing. */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 @layer base {
   html, body {
     height: 100%;

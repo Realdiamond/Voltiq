@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import ChatAssistant from "@/components/ai/ChatAssistant";
+import NotificationPrompt from "@/components/NotificationPrompt";
 import { DashboardDataProvider, useDashboard } from "@/lib/DashboardDataContext";
 import { SettingsProvider, useSettings } from "@/lib/SettingsContext";
 import { useAuth } from "@/lib/AuthContext";
@@ -88,6 +89,9 @@ function Shell({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </div>
+
+      {/* One-time "enable notifications" prompt (dashboard only) */}
+      <NotificationPrompt />
 
       {/* Global AI assistant (floating) */}
       <ChatAssistant />
