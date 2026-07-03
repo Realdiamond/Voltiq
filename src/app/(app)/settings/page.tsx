@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/AuthContext";
 import ThemeToggle from "@/components/ThemeToggle";
 import { CircleDollarSign, Gauge, RotateCcw, Database, UserCircle, Check, Loader2, BellRing } from "lucide-react";
 import { notificationPermission, requestNotificationPermission, notificationsSupported } from "@/lib/notifications";
+import { oneSignalConfigured, promptPush } from "@/lib/onesignal";
 
 export default function SettingsPage() {
   const { tariff, powerLimitW, currency, notify, setTariff, setPowerLimitW, setNotify, reset } = useSettings();
@@ -16,9 +17,19 @@ export default function SettingsPage() {
 
   const toggleNotify = async () => {
     if (notify) { setNotify(false); return; }
-    const p = await requestNotificationPermission();
-    setPerm(p);
-    setNotify(p === "granted");
+    // When OneSignal is configured, use its prompt so the user is also
+    // subscribed to push (delivered when the app is closed). This tap is the
+    // user gesture iOS requires. Falls back to the native prompt otherwise.
+    if (oneSignalConfigured()) {
+      await promptPush();
+      const granted = notificationPermission() === "granted";
+      setPerm(notificationPermission());
+      setNotify(granted);
+    } else {
+      const p = await requestNotificationPermission();
+      setPerm(p);
+      setNotify(p === "granted");
+    }
   };
 
   const [name, setName] = useState(user?.displayName || "");
